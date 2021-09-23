@@ -1,0 +1,29 @@
+<img width="100%" src="https://github.com/Flagsmith/flagsmith/raw/main/static-files/hero.png"/>
+
+# Core package for Flagsmith Flutter SDK
+
+Internally used in Flagsmith Client for basic store data with models.
+
+```dart
+import "package:flagsmith_core/flagsmith_core.dart";
+```
+
+# Custom storage
+
+You can implement your own storage implementation by extending of `CoreStore`
+
+```dart
+class CustomStorage extends CoreStore{
+    ...
+}
+
+final client = FlagsmithClient(
+      apiKey: 'your_api_key',
+      config: FlagsmithConfig(
+          storeType: StoreType.custom, 
+          isDebug: true,
+        ),
+        storage: CustomStorage()
+    );
+    await client.initialize();
+```
