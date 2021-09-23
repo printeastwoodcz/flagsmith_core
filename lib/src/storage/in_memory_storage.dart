@@ -1,10 +1,10 @@
-import '../crud_store.dart';
+import '../crud_storage.dart';
 
 /// InMemoryStore storage
-class InMemoryStore extends CoreStore {
+class InMemoryStorage extends CoreStorage {
   final Map<String, String> _items = <String, String>{};
 
-  InMemoryStore() {
+  InMemoryStorage() {
     init();
   }
 

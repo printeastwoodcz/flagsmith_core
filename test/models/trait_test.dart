@@ -4,14 +4,14 @@ import 'package:flagsmith_core/flagsmith_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final traitStringValue = '''{
+  const traitStringValue = '''{
     "id": 12,
     "trait_key": "trait_key",
     "trait_value": "value"
   }''';
   final decodedTraitStringValue =
       jsonDecode(traitStringValue) as Map<String, dynamic>;
-  final traitNotStringValue = '''{
+  const traitNotStringValue = '''{
     "id": 12,
     "trait_key": "trait_key",
     "trait_value": true

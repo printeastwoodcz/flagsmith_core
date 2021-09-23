@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:rxdart/rxdart.dart';
 
-import 'crud_store.dart';
+import 'crud_storage.dart';
 import 'model/flag.dart';
 import 'tools/security.dart';
 
-class StorageProvider with SecureStore {
+class StorageProvider with SecureStorage {
   Map<String, BehaviorSubject<Flag>?> _streams = {};
   late StorageSecurity _storageSecurity;
-  final CoreStore _store;
+  final CoreStorage _storage;
   final bool logEnabled;
   void log(message) {
     if (logEnabled) {
@@ -18,15 +18,16 @@ class StorageProvider with SecureStore {
     }
   }
 
-  StorageProvider(this._store, {String? password, this.logEnabled = false}) {
+  StorageProvider(this._storage, {String? password, this.logEnabled = false}) {
+    assert(password != null);
     _storageSecurity = StorageSecurity(password);
-    _store.init();
+    _storage.init();
     _initSubjects();
   }
 
   @override
   Future<String?> getSecuredValue(String key) async {
-    var item = await _store.read(key);
+    var item = await _storage.read(key);
     if (item == null) {
       return null;
     }
@@ -39,9 +40,9 @@ class StorageProvider with SecureStore {
       {bool update = false}) async {
     var encrypted = _storageSecurity.encrypt(value);
     if (update) {
-      return await _store.update(key, encrypted);
+      return await _storage.update(key, encrypted);
     }
-    return await _store.create(key, encrypted);
+    return await _storage.create(key, encrypted);
   }
 
   Future<bool> create(String key, Flag item) async {
@@ -54,7 +55,7 @@ class StorageProvider with SecureStore {
     _destroySubject(key);
     _streams.remove(key);
 
-    return _store.delete(key);
+    return _storage.delete(key);
   }
 
   Future<Flag?> read(String key) async {
@@ -73,12 +74,12 @@ class StorageProvider with SecureStore {
 
   Future<bool> clear() async {
     _clearSubjects();
-    await _store.clear();
+    await _storage.clear();
     return true;
   }
 
   Future<List<Flag>> getAll() async {
-    var list = await _store.getAll();
+    var list = await _storage.getAll();
     return list.map((item) {
       var decrypted = _storageSecurity.decrypt(item!)!;
       return Flag.fromJson(jsonDecode(decrypted) as Map<String, dynamic>);
@@ -101,7 +102,7 @@ class StorageProvider with SecureStore {
     var list = items
         .map((e) => MapEntry(e.key, _storageSecurity.encrypt(e.asString())))
         .toList();
-    var result = await _store.seed(list);
+    var result = await _storage.seed(list);
     if (result) {
       for (var item in items) {
         _createSubject(item);
@@ -125,6 +126,7 @@ class StorageProvider with SecureStore {
     if (item == null) {
       return;
     }
+
     if (_streams[item.key] == null) {
       _streams[item.key] = BehaviorSubject<Flag>.seeded(item);
       log('_createSubject ${item.key} -> ${_streams[item.key]?.value}');

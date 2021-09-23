@@ -5,8 +5,8 @@ import 'shared.dart';
 
 void main() {
   group('[Streams]', () {
-    StorageProvider store =
-        StorageProvider(InMemoryStore(), password: 'pa5w0rD', logEnabled: true);
+    StorageProvider store = StorageProvider(InMemoryStorage(),
+        password: 'pa5w0rD', logEnabled: true);
     setUp(() async {
       await store.seed(items: seeds);
     });

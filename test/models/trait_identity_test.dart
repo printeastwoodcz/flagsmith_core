@@ -4,8 +4,8 @@ import 'package:flagsmith_core/flagsmith_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final identityId = '123-456-789';
-  final traitStringValue = '''{
+  const identityId = '123-456-789';
+  const traitStringValue = '''{
     "identity": {
       "identifier": "$identityId"
     },
@@ -14,7 +14,7 @@ void main() {
   }''';
   final decodedTraitStringValue =
       jsonDecode(traitStringValue) as Map<String, dynamic>;
-  final traitNotStringValue = '''{
+  const traitNotStringValue = '''{
     "identity": {
       "identifier": "$identityId"
     },
@@ -73,7 +73,7 @@ void main() {
       expect(trait.key, 'trait_key');
       expect(trait.value, 'value');
       final updated = trait.copyWith(
-          identity: Identity(identifier: '13'),
+          identity: const Identity(identifier: '13'),
           key: 'trait_key2',
           value: 'value2');
 

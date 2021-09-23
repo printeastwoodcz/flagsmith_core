@@ -4,8 +4,8 @@ import 'package:flagsmith_core/flagsmith_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final identityId = '123-456-789';
-  final identityJson = r'''{"identifier":"123-456-789"}''';
+  const identityId = '123-456-789';
+  const identityJson = r'''{"identifier":"123-456-789"}''';
   final decodedIdentityJson = jsonDecode(identityJson) as Map<String, dynamic>;
   // final malformedIdentityJson = '''{"identifier_bad_guy":"$identityId"}''';
   group('[Identity]', () {

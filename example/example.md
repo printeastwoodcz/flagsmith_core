@@ -10,17 +10,17 @@ import "package:flagsmith_core/flagsmith_core.dart";
 
 # Custom storage
 
-You can implement your own storage implementation by extending of `CoreStore`
+You can implement your own storage implementation by extending of `CoreStorage`
 
 ```dart
-class CustomStorage extends CoreStore{
+class CustomStorage extends CoreStorage{
     ...
 }
 
 final client = FlagsmithClient(
       apiKey: 'your_api_key',
       config: FlagsmithConfig(
-          storeType: StoreType.custom, 
+          storageType: StorageType.custom, 
           isDebug: true,
         ),
         storage: CustomStorage()
