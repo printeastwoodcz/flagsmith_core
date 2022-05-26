@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:rxdart/rxdart.dart';
 
 import 'crud_storage.dart';
@@ -36,8 +37,7 @@ class StorageProvider with SecureStorage {
   }
 
   @override
-  Future<bool> setSecuredValue(String key, String value,
-      {bool update = false}) async {
+  Future<bool> setSecuredValue(String key, String value, {bool update = false}) async {
     var encrypted = _storageSecurity.encrypt(value);
     if (update) {
       return await _storage.update(key, encrypted);
@@ -99,9 +99,7 @@ class StorageProvider with SecureStorage {
   }
 
   Future<bool> seed({required List<Flag> items}) async {
-    var list = items
-        .map((e) => MapEntry(e.key, _storageSecurity.encrypt(e.asString())))
-        .toList();
+    var list = items.map((e) => MapEntry(e.key, _storageSecurity.encrypt(e.asString()))).toList();
     var result = await _storage.seed(list);
     if (result) {
       for (var item in items) {
