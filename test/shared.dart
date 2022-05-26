@@ -239,11 +239,11 @@ const fakeResponse = r'''[
             "name": "oauth_google",
             "created_date": "2020-03-28T21:04:51.557946Z",
             "description": "Google login key",
-            "initial_value": "{\n \"clientId\":\"232959427810\",\n \"apiKey\":\"AIzaSyCnHuN-y6BIEAM5vTISXaz3X9GpEPSxWjo\"\n}",
+            "initial_value": "{\n \"cclientId\":\"232959427810\",\n \"none\":\"xxxx\"\n}",
             "default_enabled": false,
             "type": "STANDARD"
         },
-        "feature_state_value": "{\n \"clientId\":\"232959427810\",\n \"apiKey\":\"AIzaSyCnHuN-y6BIEAM5vTISXaz3X9GpEPSxWjo\"\n}",
+        "feature_state_value": "{\n \"cclientId\":\"232959427810\",\n \"none\":\"xxxx\"\n}",
         "enabled": true,
         "environment": 23,
         "identity": null,
