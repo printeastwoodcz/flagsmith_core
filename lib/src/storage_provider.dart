@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as d;
 
 import 'package:rxdart/rxdart.dart';
 
@@ -14,8 +15,7 @@ class StorageProvider with SecureStorage {
   final bool logEnabled;
   void log(message) {
     if (logEnabled) {
-      // ignore: avoid_print
-      print(message);
+      d.log(message);
     }
   }
 
@@ -32,8 +32,7 @@ class StorageProvider with SecureStorage {
     if (item == null) {
       return null;
     }
-    var decrypted = _storageSecurity.decrypt(item);
-    return decrypted;
+    return _storageSecurity.decrypt(item);
   }
 
   @override
@@ -54,7 +53,6 @@ class StorageProvider with SecureStorage {
   Future<bool> delete(String key) {
     _destroySubject(key);
     _streams.remove(key);
-
     return _storage.delete(key);
   }
 
@@ -68,7 +66,9 @@ class StorageProvider with SecureStorage {
 
   Future<bool> update(String key, Flag item) async {
     var result = await setSecuredValue(key, item.asString(), update: true);
-    _updateSubject(await read(key));
+    read(key).then((value) {
+      _updateSubject(value);
+    });
     return result;
   }
 
@@ -80,10 +80,12 @@ class StorageProvider with SecureStorage {
 
   Future<List<Flag>> getAll() async {
     var list = await _storage.getAll();
-    return list.map((item) {
+    final result = <Flag>[];
+    for (final item in list) {
       var decrypted = _storageSecurity.decrypt(item!)!;
-      return Flag.fromJson(jsonDecode(decrypted) as Map<String, dynamic>);
-    }).toList();
+      result.add(Flag.fromJson(jsonDecode(decrypted) as Map<String, dynamic>));
+    }
+    return result;
   }
 
   Future<bool> saveAll(List<Flag> items) async {
@@ -99,7 +101,10 @@ class StorageProvider with SecureStorage {
   }
 
   Future<bool> seed({required List<Flag> items}) async {
-    var list = items.map((e) => MapEntry(e.key, _storageSecurity.encrypt(e.asString()))).toList();
+    List<MapEntry<String, String>> list = [];
+    for (final item in items) {
+      list.add(MapEntry(item.key, _storageSecurity.encrypt(item.asString())));
+    }
     var result = await _storage.seed(list);
     if (result) {
       for (var item in items) {
