@@ -63,16 +63,19 @@ class InMemoryStorage extends CoreStorage {
   /// regturns all saved flags [List<Flag>]
   @override
   Future<List<String>> getAll() async {
-    var result = <String>[];
-    _items.forEach((key, String value) {
-      result.add(value);
-    });
+    final result = <String>[];
+    for (final item in _items.entries) {
+      result.add(item.value);
+    }
+    // _items.forEach((key, String value) {
+    //   result.add(value);
+    // });
     return result.toList();
   }
 
   @override
   Future<bool> seed(List<MapEntry<String, String>>? items) async {
-    var saved = await getAll();
+    final saved = await getAll();
     if (saved.isEmpty && items != null && items.isNotEmpty == true) {
       for (var item in items) {
         await create(item.key, item.value);

@@ -28,7 +28,7 @@ class StorageProvider with SecureStorage {
 
   @override
   Future<String?> getSecuredValue(String key) async {
-    var item = await _storage.read(key);
+    final item = await _storage.read(key);
     if (item == null) {
       return null;
     }
@@ -37,7 +37,7 @@ class StorageProvider with SecureStorage {
 
   @override
   Future<bool> setSecuredValue(String key, String value, {bool update = false}) async {
-    var encrypted = _storageSecurity.encrypt(value);
+    final encrypted = _storageSecurity.encrypt(value);
     if (update) {
       return await _storage.update(key, encrypted);
     }
@@ -45,7 +45,7 @@ class StorageProvider with SecureStorage {
   }
 
   Future<bool> create(String key, Flag item) async {
-    var response = await setSecuredValue(key, item.asString());
+    final response = await setSecuredValue(key, item.asString());
     _createSubject(await read(key));
     return response;
   }
@@ -57,7 +57,7 @@ class StorageProvider with SecureStorage {
   }
 
   Future<Flag?> read(String key) async {
-    var decrypted = await getSecuredValue(key);
+    final decrypted = await getSecuredValue(key);
     if (decrypted == null) {
       return null;
     }
@@ -65,7 +65,7 @@ class StorageProvider with SecureStorage {
   }
 
   Future<bool> update(String key, Flag item) async {
-    var result = await setSecuredValue(key, item.asString(), update: true);
+    final result = await setSecuredValue(key, item.asString(), update: true);
     read(key).then((value) {
       _updateSubject(value);
     });
@@ -79,11 +79,14 @@ class StorageProvider with SecureStorage {
   }
 
   Future<List<Flag>> getAll() async {
-    var list = await _storage.getAll();
+    final list = await _storage.getAll();
+    final filtered = list.whereType<String>();
     final result = <Flag>[];
-    for (final item in list) {
-      var decrypted = _storageSecurity.decrypt(item!)!;
-      result.add(Flag.fromJson(jsonDecode(decrypted) as Map<String, dynamic>));
+    for (final item in filtered) {
+      var decrypted = _storageSecurity.decrypt(item);
+      if (decrypted != null) {
+        result.add(Flag.fromJson(jsonDecode(decrypted) as Map<String, dynamic>));
+      }
     }
     return result;
   }
@@ -119,7 +122,7 @@ class StorageProvider with SecureStorage {
   BehaviorSubject<Flag>? subject(String featureName) => _streams[featureName];
 
   Future<void> _initSubjects() async {
-    var result = await getAll();
+    final result = await getAll();
     for (var flag in result) {
       _createSubject(flag);
     }
@@ -161,11 +164,11 @@ class StorageProvider with SecureStorage {
   }
 
   Future<bool> togggleFeature(String featureName) async {
-    var value = await read(featureName);
+    final value = await read(featureName);
     if (value == null) {
       return false;
     }
-    var current = value.enabled!;
+    var current = value.enabled ?? false;
     var updated = value.copyWith(enabled: !current);
     return await update(featureName, updated);
   }
